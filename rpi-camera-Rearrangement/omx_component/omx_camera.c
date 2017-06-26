@@ -263,12 +263,16 @@ void camera_create(void)
     omx_camera.interface.init_handle = camera_init_handle;
     omx_camera.interface.free_handle = camera_free_handle;
 
+    omx_camera.interface.param_set = camera_param_set;
+
     omx_camera.interface.port_enable = camera_port_enable;
     omx_camera.interface.port_disable = camera_port_disable;
 
     omx_camera.interface.idle_state = camera_idle_state;
     omx_camera.interface.excute_state = camera_excute_state;
     omx_camera.interface.load_state = camera_load_state;
+
+    omx_camera.block_until_camera_ready = camera_block_until_camera_ready;
 
     omx_camera.capture_start = camera_capture_start;
     omx_camera.capture_stop = camera_capture_stop;
