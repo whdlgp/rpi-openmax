@@ -6,7 +6,11 @@
 
 typedef struct omx_camera_t {
     common_interface interface;
-    
+
+    //camera input buffer allocation and free
+    void (*alloc_buffer_in)(void);
+    void (*free_buffer_in)(void);
+
     //wait camera until ready
     void (*block_until_camera_ready)(void);
 

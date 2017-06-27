@@ -103,6 +103,11 @@ void common_context_init(void)
     }
 }
 
+void common_context_deinit(void)
+{
+    vcos_semaphore_delete(&ctx.handler_lock);
+}
+
 //callback(or interrupt) for omx component
 //use OMX_CALLBACKTYPE
 OMX_CALLBACKTYPE callbacks;

@@ -1,5 +1,6 @@
 #include "omx_camera.h"
 
+//pre_defined object
 omx_camera_t omx_camera;
 
 void camera_init_handle(void)
@@ -227,6 +228,27 @@ void camera_load_state(void)
     block_until_state_changed(omx_camera.interface.handle, OMX_StateIdle);
 }
 
+void camera_alloc_buffer_in(void)
+{
+    OMX_PARAM_PORTDEFINITIONTYPE camera_portdef;
+    OMX_INIT_STRUCTURE(camera_portdef);
+    camera_portdef.nPortIndex = 73;
+    
+    if((r = OMX_GetParameter(omx_camera.interface.handle, OMX_IndexParamPortDefinition, &camera_portdef)) != OMX_ErrorNone) {
+        omx_die(r, "Failed to get port definition for camera input port 73");
+    }
+    if((r = OMX_AllocateBuffer(omx_camera.interface.handle, &omx_camera.buffer_in, 73, NULL, camera_portdef.nBufferSize)) != OMX_ErrorNone) {
+        omx_die(r, "Failed to allocate buffer for camera input port 73");
+    }
+}
+
+void camera_free_buffer_in(void)
+{
+    if((r = OMX_FreeBuffer(omx_camera.interface.handle, 73, omx_camera.buffer_in)) != OMX_ErrorNone) {
+        omx_die(r, "Failed to free buffer for camera input port 73");
+    }
+}
+
 void camera_block_until_camera_ready(void)
 {
     int n = 0;
@@ -260,6 +282,7 @@ void camera_capture_stop(void)
 
 void camera_create(void)
 {
+    //set common interface mathod
     omx_camera.interface.init_handle = camera_init_handle;
     omx_camera.interface.free_handle = camera_free_handle;
 
@@ -271,6 +294,10 @@ void camera_create(void)
     omx_camera.interface.idle_state = camera_idle_state;
     omx_camera.interface.excute_state = camera_excute_state;
     omx_camera.interface.load_state = camera_load_state;
+
+    //set component specific mathod
+    omx_camera.alloc_buffer_in = camera_alloc_buffer_in;
+    omx_camera.free_buffer_in = camera_free_buffer_in;
 
     omx_camera.block_until_camera_ready = camera_block_until_camera_ready;
 
